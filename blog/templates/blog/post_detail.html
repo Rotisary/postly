@@ -1,0 +1,40 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+    <article class="media content-section">
+      <img class="rounded-circle  article-img"  src="{{ object.author.profile.image.url }}" alt="media/default.jpg">
+      <div class="media-body">
+        <div class="article-metadata">
+          <small class="text-muted" style="display:inline; margin-inline-end: 50%;">
+            <a  href="{% url 'profile' object.author.username %}">{{ object.author }}</a>
+            {{ object.date_posted|date:"F d, Y" }}
+          </small>
+            {% if object.author == user %}           
+                   <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+                   <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>        
+            {% endif %}
+        </div>
+        <h2 class="article-title" >{{ object.title }}</h2>
+        <p class="article-content article-metadata">{{ object.content }}</p>
+        {% if post.image == 'post_default.jpg' %}
+
+        {% else %}
+          <div class="article-metadata" >
+            <img class="img-fluid image" src="{{ object.image.url }}">
+          </div>
+        {% endif %}
+
+        <p style="display:inline; margin-inline-start: 20%; margin-inline-end: 30%;">
+          {% if user in object.likes.all %}
+            <a class="like-btn text-muted" data-href="{% url 'post_like_api' object.id %}" data-likes="{{ object.number_of_likes }}" href="">{{ object.number_of_likes }} <i class="fa-solid fa-heart" style="color:red"></i></a>
+          {% else %}
+            <a class="like-btn text-muted" data-href="{% url 'post_like_api' object.id %}" data-likes="{{ object.number_of_likes }}" href="">{{ object.number_of_likes }} <i class="fa fa-heart-o" style="color:red"></i></a>
+          {% endif %}
+        </p>
+        {% if post.number_of_comments > 1 %}
+          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'comments' post.id %}">{{ object.number_of_comments }} Comments</a>
+        {% else %}
+          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'comments' post.id %}">{{ object.number_of_comments }} Comment</a>
+        {% endif %} 
+      </div>
+    </article>
+{% endblock content %}

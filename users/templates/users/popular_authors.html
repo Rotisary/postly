@@ -1,0 +1,24 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+    <h2>These are our top authors</h2>
+    {% for profile in profiles %}
+        <div class="media content-section">
+            <img class="rounded-circle  article-img"  src="{{ profile.image.url }}">
+            <div class="media-body" >
+                <div class="article-metadata">
+                    <a href="{% url 'profile' profile.user.username %}">
+                        <small class="text-muted"  >
+                            @{{ profile.user.username }}
+                        </small>
+                    </a>
+                    {% if profile.number_of_followers > 1 %}
+                       {{ profile.number_of_followers }} followers
+                    {% else %}
+                       {{ profile.number_of_followers }} follower
+                    {% endif %}
+                </div>
+                <p class="text">{{ profile.bio }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{%  endblock %}

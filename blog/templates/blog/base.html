@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+    <script src="https://kit.fontawesome.com/682f18e2b6.js" crossorigin="anonymous"></script>
+    {% if title  %}
+     <title>postly - {{ title }}</title>
+    {% else %}
+     <title>postly</title>
+    {% endif %}
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+          <div class="container">
+            <a class="navbar-brand mr-4" href="{% url 'blog-home'%}">postly</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggle">
+              <div class="navbar-nav mr-auto">
+                <a class="nav-item nav-link" href="{% url 'blog-home'%}">Home</a>
+                <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
+              </div>
+              <!-- Navbar Right Side -->
+              <div class="navbar-nav justify-content-center">
+                <form action="{% url 'search' %}" method="get" class="form-inline" role="search">
+                  <input class="form-control me-2 mr-2" type="search" name="search" placeholder="Search for users & posts" aria-label="Search">
+                  <button class="btn btn-outline-info"  type="submit">Search</button>
+                </form>
+                {% if user.is_authenticated %}
+                   <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
+                   <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a> 
+                   <a class="nav-item nav-link" href="{% url 'profile' user.username  %}">Profile</a>
+                {% else %}
+                  <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                  <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </nav>
+    </header>
+    <main role="main" class="container">
+        <div class="row">
+          <div class="col-md-8">
+            {% if messages %}
+               {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                  </div>
+               {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+          </div>
+          <div class="col-md-4">
+            <div class="content-section">
+              <h3>Check These Out!</h3>
+              <p class='text-muted'>
+                <ul>
+                  <a href="{% url 'latest-posts' %}"><li class="list-group-item list-group-item-light content-section">Latest Posts</li></a>
+                  <a href="{% url 'trending' %}"><li class="list-group-item list-group-item-light content-section">Trending</li></a>
+                  <a href="{% url 'popular-authors' %}"><li class="list-group-item list-group-item-light content-section">Popular Authors</li></a>
+                </ul>
+              </p>
+            </div>
+          </div>
+        </div>
+    </main>
+    
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+    -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>    <!-- <script src="index.js"></script> -->
+    <script>
+
+      $(document).ready(function() {
+        function updateText(btn, newCount, icon){
+              btn.html(newCount + " " + icon)
+            }
+
+          $(".like-btn").click(function(e){
+              e.preventDefault()
+              var this_ = $(this)
+              var likeUrl = this_.attr("data-href")
+              var likeCount = parseInt(this_.attr("data-likes"))
+              
+              $.ajax({
+              url: likeUrl,
+              method: "GET",
+              data: {},
+              success: function(data){           
+                if (data.liked){ 
+                  //  $("#count").text(data.likescount)
+                  updateText(this_, data.likescount , '<i class="fa-solid fa-heart" style="color:red"></i>')
+                }
+                else{
+                  //  $("#count").text(data.likescount)
+                  updateText(this_, data.likescount , '<i class="fa fa-heart-o" style="color:red"></i>')
+                } 
+                console.log(data)
+              },
+              error: function(error){
+                console.log(error)
+                console.log("error")
+              }
+            })
+          })
+        })
+    </script>
+
+</body>
+</html>
+<!-- function updateText(btn, newCount, verb){
+//   btn.text(newCount + " " + verb)
+} -->
+
+

@@ -1,0 +1,35 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+    <div class="media">
+        <div style="display:inline; margin-inline-end: 40%;">
+            {% if post.number_of_comments > 1 %}
+              <h5>{{ post.number_of_comments }} Comments</h5>
+            {% else %}
+             <h5>{{ post.number_of_comments }} Comment</h5>
+            {% endif %}
+        </div>
+        <a class="btn btn-secondary  btn-sm mt-1 mb-1" href="{% url 'drop-comment' post.id %}">Drop a comment!</a>  
+    </div>
+    
+    {% for comment in comments %}        
+        <div class="media content-section">
+            <img class="rounded-circle  article-img"  src="{{ comment.author.profile.image.url }}">
+            <div class="media-body" >
+                <div class="article-metadata">
+                    <div class="media">
+                        <small class="text-muted" style="display:inline; margin-inline-end: 60%;">
+                            <a href="{% url 'profile' comment.author.username %}">
+                               {{ comment.author }}
+                            </a>
+                            {{ comment.posted_on|date:"F d, Y" }}
+                        </small>
+                        {% if request.user == comment.author %}     
+                          <a class="btn btn-danger btn-sm mt-1 mb-1"  href="{% url 'comment-delete' comment.id %}">Delete</a>
+                        {% endif %}   
+                    </div>
+                </div>
+                <p class="text-secondary">{{ comment.content }}</p>
+            </div>
+        </div>
+    {% endfor %}             
+{% endblock content %}

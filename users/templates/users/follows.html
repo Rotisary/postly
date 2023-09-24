@@ -1,0 +1,21 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+  {% if profile.user == user %}
+    <h1>You follow {{ profile.number_of_follows }} people:</h1>
+  {% else %}
+    <h1>{{ profile.user.username }} follows {{ profile.number_of_follows }} people:</h1>
+  {% endif %}
+        {% for following in profile.follows.all %}
+            <div class="media content-section">
+                <img class="rounded-circle  article-img"  src="{{ following.image.url }}">
+                <div class="media-body" >
+                    <a href="{% url 'profile' following.user.username %}">
+                        <small class="text-muted"  >
+                            @{{ following }}
+                        </small>
+                    </a>
+                    <p class="text-secondary">{{ following.bio }}</p>
+                </div>
+            </div>
+        {% endfor %}
+{% endblock content %}

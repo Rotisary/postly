@@ -1,0 +1,96 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">         
+            <div class="media">
+                <img class="rounded-circle account-img" src="{{ profile.image.url }}">
+                <div class="media-body">
+                    <h2 class="account-heading">{{ profile.user.username }}</h2>
+                    <p class="text-secondary">{{ profile.user.email }}</p>
+                    <p class="text-secondary">{{ profile.bio }}</p>
+                    <a class="btn btn-outline-info mb-4" href="{% url 'following' profile.user.username %}">{{ profile.number_of_follows }} Following</a>
+                    {% if profile.number_of_followers > 1 %}
+                       <a class="btn btn-outline-info mb-4" href="{% url 'followers' profile.user.username %}">{{ profile.number_of_followers }} Followers</a>
+                    {% else %}
+                       <a class="btn btn-outline-info mb-4" href="{% url 'followers' profile.user.username %}">{{ profile.number_of_followers }} Follower</a>
+                    {% endif %}
+                    </div>
+                <form method="POST" action="{% url 'follow'  profile.user.id %}">
+                    {% csrf_token %}
+                    {% if profile in user.profile.follows.all %}  
+                        <div class="form-group">
+                            <button class="btn btn-outline-danger"  type="submit">Unfollow</button>
+                        </div>
+                    {% elif user == profile.user %}
+                                
+                    {% else %}
+                        <div class="form-group">
+                            <button class="btn btn-outline-info" type="submit">Follow</button>
+                        </div>
+                    {% endif %}
+                </form>                   
+            </div>
+            {% if profile.user == user %}
+                <div>
+                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'edit-profile' %}">Edit Profile</a>  
+                </div>
+            {% endif %}       
+        {% for post in posts %}
+            <article class="media content-section">
+                <img class="rounded-circle  article-img"  src="{{ post.author.profile.image.url }}">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <div class="media">
+                        <a class="mr-2" href="{% url 'profile' post.author.username %}">{{ post.author }}</a>
+                        <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+                        </div>
+                    </div>
+                    <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    <p class="article-content article-metadata">{{ post.content|truncatewords:30 }}</p>
+                    {% if post.image == 'post_default.jpg' %}
+
+                    {% else %}
+                        <div class="article-metadata">
+                            <img class="img-fluid image" src="{{ post.image.url }}">
+                        </div>
+                    {% endif %}
+
+                    <p  style="display:inline; margin-inline-start: 20%; margin-inline-end: 30%;">
+                        {% if user in post.likes.all %}
+                           <a class="like-btn text-muted" data-href="{% url 'post_like_api' post.id %}" data-likes="{{ post.number_of_likes }}" href="">{{ post.number_of_likes }} <i class="fa-solid fa-heart" style="color:red" ></i></a>
+                        {% else %}
+                           <a class="like-btn text-muted" data-href="{% url 'post_like_api' post.id %}" data-likes="{{ post.number_of_likes }}" href="">{{ post.number_of_likes }} <i class="fa fa-heart-o" style="color:red" ></i></a>
+                        {% endif %} 
+                    </p>
+
+                    {% if post.number_of_comments > 1 %}
+                       <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'comments' post.id %}">{{ post.number_of_comments }} Comments</a>
+                    {% else %}
+                       <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'comments' post.id %}">{{ post.number_of_comments }} Comment</a>
+                    {% endif %} 
+                </div>
+            </article>
+        {% endfor %}
+        {% if is_paginated %}
+
+            {% if page_obj.has_previous %}
+                <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+                
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+    
+            {% if page_obj.has_next %}
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+                <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+            {% endif %}
+  
+        {% endif %}    
+    </div>
+{% endblock content %}
