@@ -15,11 +15,6 @@ from django.views.generic import (
 from .models import Post, PostComment
 
 
-def home(request):
-    context = {'posts': Post.objects.all()}
-    return render(request, 'blog/home.html', context)
-
-
 class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'
@@ -83,21 +78,17 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def post_likes(request, pk):
-    # is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-    # if is_ajax:
-            post = get_object_or_404(Post, id=pk)
-            if post.likes.filter(id=request.user.id).first():
-                post.likes.remove(request.user)
-            else:
-                post.likes.add(request.user)
-            
-            likes_count = post.number_of_likes()
-            data = {
-                'likes_count': likes_count
-            }
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    # else:
-    #     return HttpResponseBadRequest('Invalid Request')
+        post = get_object_or_404(Post, id=pk)
+        if post.likes.filter(id=request.user.id).first():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+        
+        likes_count = post.number_of_likes()
+        data = {
+            'likes_count': likes_count
+        }
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 from rest_framework.views import APIView
@@ -105,12 +96,6 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 
 class PostLikesAPI(APIView):
-    """
-    View to list all users in the system.
-
-    * Requires token authentication.
-    * Only admin users are able to access this view.
-    """
     authentication_classes = (authentication.SessionAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
