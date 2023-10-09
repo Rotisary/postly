@@ -13,6 +13,7 @@ from django.views.generic import (
     DeleteView
 )
 from .models import Post, PostComment
+from users.decorators import allowed_users
 
 
 def home(request):
