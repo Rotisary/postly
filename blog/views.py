@@ -16,11 +16,6 @@ from .models import Post, PostComment
 from users.decorators import allowed_users
 
 
-def home(request):
-    context = {'posts': Post.objects.all()}
-    return render(request, 'blog/home.html', context)
-
-
 class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'
@@ -84,6 +79,8 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def post_likes(request, pk):
+    # is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    # if is_ajax:
             post = get_object_or_404(Post, id=pk)
             if post.likes.filter(id=request.user.id).first():
                 post.likes.remove(request.user)
@@ -95,6 +92,9 @@ def post_likes(request, pk):
                 'likes_count': likes_count
             }
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    # else:
+    #     return HttpResponseBadRequest('Invalid Request')
+
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
