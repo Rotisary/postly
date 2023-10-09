@@ -79,8 +79,6 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def post_likes(request, pk):
-    # is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-    # if is_ajax:
             post = get_object_or_404(Post, id=pk)
             if post.likes.filter(id=request.user.id).first():
                 post.likes.remove(request.user)
@@ -92,8 +90,6 @@ def post_likes(request, pk):
                 'likes_count': likes_count
             }
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    # else:
-    #     return HttpResponseBadRequest('Invalid Request')
 
 
 from rest_framework.views import APIView
