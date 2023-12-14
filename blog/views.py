@@ -13,7 +13,6 @@ from django.views.generic import (
     DeleteView
 )
 from .models import Post, PostComment
-from users.decorators import allowed_users
 
 
 class PostListView(ListView):
@@ -78,20 +77,6 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return False
 
 
-def post_likes(request, pk):
-            post = get_object_or_404(Post, id=pk)
-            if post.likes.filter(id=request.user.id).first():
-                post.likes.remove(request.user)
-            else:
-                post.likes.add(request.user)
-            
-            likes_count = post.number_of_likes()
-            data = {
-                'likes_count': likes_count
-            }
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
@@ -120,8 +105,6 @@ class PostLikesAPI(APIView):
         }
             
         return Response(data)
-
-
 
 
 class CommentCreateView(LoginRequiredMixin, CreateView):
