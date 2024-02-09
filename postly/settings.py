@@ -26,12 +26,7 @@ SECRET_KEY = 'django-insecure-9ke000f-ry4zz)9yvcxg7s270y(h9*uqjyv94pcxqi&i@01nqq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ '44.226.145.213',
-                  '54.187.200.255',
-                  '34.213.214.55',
-                  '35.164.95.156',
-                  '44.230.95.183',
-                  '44.229.200.200' ]
+ALLOWED_HOSTS = ['postly-es10.onrender.com']
 
 
 # Application definition
