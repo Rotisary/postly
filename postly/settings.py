@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9ke000f-ry4zz)9yvcxg7s270y(h9*uqjyv94pcxqi&i@01nqq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['postly-es10.onrender.com']
 
